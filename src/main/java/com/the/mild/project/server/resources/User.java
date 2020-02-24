@@ -1,22 +1,5 @@
 package com.the.mild.project.server.resources;
 
-import static com.the.mild.project.MongoCollections.*;
-import static com.the.mild.project.ResourceConfig.PATH_CREATE;
-import static com.the.mild.project.ResourceConfig.PATH_TODO_RESOURCE;
-import static com.the.mild.project.ResourceConfig.PATH_UPDATE_BY_ID_PARAM;
-import static com.the.mild.project.ResourceConfig.PathParams.PATH_PARAM_ID;
-import static com.the.mild.project.server.Main.MONGO_DB_FACTORY;
-
-import javax.inject.Singleton;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.MediaType;
-
-import org.bson.Document;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.client.MongoDatabase;
 import com.the.mild.project.MongoDatabaseType;
@@ -27,13 +10,29 @@ import com.the.mild.project.db.mongo.exceptions.CollectionNotFoundException;
 import com.the.mild.project.db.mongo.exceptions.DocumentSerializationException;
 import com.the.mild.project.server.jackson.JacksonHandler;
 import com.the.mild.project.server.jackson.TodoJson;
+import org.bson.Document;
+
+import javax.inject.Singleton;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.MediaType;
+
+import static com.the.mild.project.MongoCollections.USER;
+import static com.the.mild.project.ResourceConfig.CommonPaths.PATH_CREATE;
+import static com.the.mild.project.ResourceConfig.PATH_USER_RESOURCE;
+import static com.the.mild.project.ResourceConfig.PathParams.PATH_PARAM_ID;
+import static com.the.mild.project.ResourceConfig.PathParams.PATH_PARAM_UPDATE_BY_ID;
+import static com.the.mild.project.server.Main.MONGO_DB_FACTORY;
 
 /**
  * Root resource
  */
 @Singleton
-@Path(PATH_TODO_RESOURCE)
-public class Todo {
+@Path(PATH_USER_RESOURCE)
+public class User {
     private static final MongoDatabaseFactory mongoFactory;
     private static final MongoDocumentHandler mongoHandlerDevelopTest;
 
@@ -42,7 +41,7 @@ public class Todo {
 
         assert mongoFactory != null;
 
-        final MongoDatabase developTestDb = mongoFactory.getDatabase(MongoDatabaseType.DEVELOP_TEST);
+        final MongoDatabase developTestDb = mongoFactory.getDatabase(MongoDatabaseType.USERS);
         mongoHandlerDevelopTest = new MongoDocumentHandler(developTestDb);
     }
 
@@ -70,14 +69,14 @@ public class Todo {
      * @param todoBody
      */
     @PUT
-    @Path(PATH_UPDATE_BY_ID_PARAM)
+    @Path(PATH_PARAM_UPDATE_BY_ID)
     @Consumes(MediaType.APPLICATION_JSON)
     public void updateTodo(@PathParam(PATH_PARAM_ID) String id, String todoBody) {
         try {
             System.out.println(todoBody);
             Document updateDoc = JacksonHandler.stringToDocument(todoBody);
 
-            mongoHandlerDevelopTest.tryUpdateOneById(TODO.collectionName(), id, updateDoc);
+            mongoHandlerDevelopTest.tryUpdateOneById(USER.collectionName(), id, updateDoc);
         } catch(JsonProcessingException | CollectionNotFoundException e) {
             e.printStackTrace();
         }

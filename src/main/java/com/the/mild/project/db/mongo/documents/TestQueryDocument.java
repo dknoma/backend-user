@@ -1,16 +1,12 @@
 package com.the.mild.project.db.mongo.documents;
 
-import static com.the.mild.project.MongoCollections.TEST_NAME;
+import com.the.mild.project.db.mongo.Query;
+import com.the.mild.project.db.mongo.QueryDocument;
+import org.bson.Document;
 
 import java.util.function.Consumer;
 
-import org.bson.Document;
-
-import com.the.mild.project.db.mongo.annotations.DocumentSerializable;
-import com.the.mild.project.db.mongo.Query;
-import com.the.mild.project.db.mongo.QueryDocument;
-
-@DocumentSerializable(collectionName = TEST_NAME)
+//@DocumentSerializable(collectionName = TEST_NAME)
 public class TestQueryDocument extends QueryDocument {
 
     private TestQueryDocument() {

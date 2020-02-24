@@ -1,20 +1,18 @@
 package com.the.mild.project.server.resources;
 
-import static com.the.mild.project.ResourceConfig.PATH_TEST_RESOURCE_WITH_PARAM;
-import static com.the.mild.project.ResourceConfig.PathParams.PATH_PARAM_ID;
+import com.the.mild.project.server.jackson.JacksonHandler;
+import com.the.mild.project.server.jackson.ParamTest;
 
 import javax.inject.Singleton;
 import javax.ws.rs.GET;
-import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import com.the.mild.project.server.jackson.ParamTest;
-import com.the.mild.project.server.jackson.JacksonHandler;
+import static com.the.mild.project.ResourceConfig.PathParams.PATH_PARAM_ID;
 
 @Singleton
-@Path(PATH_TEST_RESOURCE_WITH_PARAM)
+//@Path(PATH_TEST_RESOURCE_WITH_PARAM)
 public class TestResourceWithSingleParam {
 
     @GET

@@ -3,41 +3,41 @@ package com.the.mild.project.db.mongo.documents;
 import com.the.mild.project.db.mongo.InsertDocument;
 import com.the.mild.project.db.mongo.InsertDocumentEntry;
 import com.the.mild.project.db.mongo.annotations.DocumentEntryKeys;
-import com.the.mild.project.server.jackson.TodoJson;
+import com.the.mild.project.db.mongo.annotations.DocumentSerializable;
 import org.bson.Document;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-//@DocumentSerializable(collectionName = TODO_NAME)
-public class TodoDocument extends InsertDocument {
+import static com.the.mild.project.MongoCollections.USER_NAME;
 
-    public TodoDocument() {
+@DocumentSerializable(collectionName = USER_NAME)
+public class UserCreateDocument extends InsertDocument {
+
+    public UserCreateDocument() {
         super();
     }
 
-    public TodoDocument(TodoJson todo) {
+    public UserCreateDocument(String username, String token) {
         super();
-        putData(getEntryClass(), todo.getUsername(), todo.getMessage(), todo.isCompleted());
-    }
-
-    public TodoDocument(String username, String message, boolean completed) {
-        super();
-        putData(getEntryClass(), username, message, completed);
+        putData(getEntryClass(), username, token);
     }
 
     /**
-     *
      * Put all required data into the document.
      * @param username;
-     * @param message;
-     * @param completed;
-     * @return document
+     * @param token;
+     * @return TestDocument
      */
-    public TodoDocument putAll(String username, String message, boolean completed) {
-        putData(getEntryClass(), username, message, completed);
+    public UserCreateDocument putAll(String username, String token) {
+        putData(getEntryClass(), username, token);
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("User_Create_Document=[%s]", super.document.toString());
     }
 
     /**
@@ -57,8 +57,7 @@ public class TodoDocument extends InsertDocument {
     @DocumentEntryKeys
     public enum Entry implements InsertDocumentEntry {
         USERNAME("username"),
-        TODO_MESSAGE("message"),
-        COMPLETED("completed");
+        TOKEN("token");
 
         private static final Map<String, Entry> ENTRY_BY_NAME = new HashMap<>();
 
