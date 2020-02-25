@@ -1,6 +1,8 @@
 package jersey;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.the.mild.project.server.Main;
+import com.the.mild.project.server.jackson.IdJson;
 import com.the.mild.project.server.jackson.JacksonHandler;
 import com.the.mild.project.server.jackson.UserJson;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -17,10 +19,18 @@ import javax.ws.rs.core.Response;
 
 import static com.the.mild.project.ResourceConfig.PATH_USER_RESOURCE;
 import static com.the.mild.project.ResourceConfig.PATH_USER_RESOURCE_CREATE;
+import static com.the.mild.project.ResourceConfig.PATH_USER_RESOURCE_GET_FORMAT;
 import static java.net.HttpURLConnection.HTTP_NO_CONTENT;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class PathsIT {
+    private static final String EMPTY_JSON = "{}";
+
     private HttpServer server;
     private WebTarget target;
 
@@ -53,5 +63,26 @@ public class PathsIT {
         final int status = post.getStatus();
         System.out.printf("status=%s\n", status);
         assertEquals(status, HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Test to see that the user was created
+     */
+    @Test
+    public void pathGetUser() {
+        String id = "5e556ad348c95121d3fb0578";
+
+        final String resp = target.path(String.format(PATH_USER_RESOURCE_GET_FORMAT, id))
+                                  .request()
+                                  .get(String.class);
+
+        try {
+            JacksonHandler.unmarshal(resp, UserJson.class);
+            System.out.printf("resp=%s\n", resp);
+            assertNotEquals("Response was empty. User does not exist", resp, EMPTY_JSON);
+        } catch(JsonProcessingException e) {
+            e.printStackTrace();
+            fail();
+        }
     }
 }

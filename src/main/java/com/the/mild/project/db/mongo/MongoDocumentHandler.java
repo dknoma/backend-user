@@ -48,8 +48,9 @@ public final class MongoDocumentHandler {
     }
 
     public Document tryFindById(String collectionName, String id) throws CollectionNotFoundException {
+        final ObjectId objectId = new ObjectId(id);
         final Document query = new Document();
-        query.put("_id", id);
+        query.put("_id", objectId);
 
         final MongoCollection<Document> collection = database.getCollection(collectionName);
 

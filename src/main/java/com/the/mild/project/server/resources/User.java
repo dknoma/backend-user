@@ -14,15 +14,19 @@ import org.bson.Document;
 
 import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import static com.the.mild.project.MongoCollections.USER;
 import static com.the.mild.project.ResourceConfig.CommonPaths.PATH_CREATE;
 import static com.the.mild.project.ResourceConfig.PATH_USER_RESOURCE;
+import static com.the.mild.project.ResourceConfig.PATH_USER_RESOURCE_GET;
+import static com.the.mild.project.ResourceConfig.PathParams.ID;
 import static com.the.mild.project.ResourceConfig.PathParams.PATH_PARAM_ID;
 import static com.the.mild.project.ResourceConfig.PathParams.PATH_PARAM_UPDATE_BY_ID;
 import static com.the.mild.project.server.Main.MONGO_DB_FACTORY;
@@ -36,6 +40,8 @@ public class User {
     private static final MongoDatabaseFactory MONGO_DATABASE_FACTORY;
     private static final MongoDocumentHandler MONGO_HANDLER_USERS;
 
+    private static final String EMPTY_JSON = "{}";
+
     static {
         MONGO_DATABASE_FACTORY = MONGO_DB_FACTORY.orElse(null);
 
@@ -43,6 +49,24 @@ public class User {
 
         final MongoDatabase developTestDb = MONGO_DATABASE_FACTORY.getDatabase(MongoDatabaseType.USERS);
         MONGO_HANDLER_USERS = new MongoDocumentHandler(developTestDb);
+    }
+
+    /**
+     * Method handling HTTP GET requests. The returned object will be sent
+     * to the client.
+     */
+    @GET
+    @Path(PATH_PARAM_ID)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getUser(@PathParam(ID) String id) {
+        String resp = EMPTY_JSON;
+        try {
+            final Document document = MONGO_HANDLER_USERS.tryFindById(USER.collectionName(), id);
+            resp = document.toJson();
+        } catch(CollectionNotFoundException e) {
+            e.printStackTrace();
+        }
+        return resp;
     }
 
     /**
@@ -71,7 +95,7 @@ public class User {
     @PUT
     @Path(PATH_PARAM_UPDATE_BY_ID)
     @Consumes(MediaType.APPLICATION_JSON)
-    public void updateUser(@PathParam(PATH_PARAM_ID) String id, String userBody) {
+    public void updateUser(@PathParam(ID) String id, String userBody) {
         try {
             System.out.println(userBody);
             Document updateDoc = JacksonHandler.stringToDocument(userBody);
