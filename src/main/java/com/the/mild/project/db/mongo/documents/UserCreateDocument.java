@@ -4,6 +4,7 @@ import com.the.mild.project.db.mongo.InsertDocument;
 import com.the.mild.project.db.mongo.InsertDocumentEntry;
 import com.the.mild.project.db.mongo.annotations.DocumentEntryKeys;
 import com.the.mild.project.db.mongo.annotations.DocumentSerializable;
+import com.the.mild.project.server.jackson.UserJson;
 import org.bson.Document;
 
 import java.util.Arrays;
@@ -19,19 +20,24 @@ public class UserCreateDocument extends InsertDocument {
         super();
     }
 
-    public UserCreateDocument(String username, String token) {
+    public UserCreateDocument(UserJson json) {
         super();
-        putData(getEntryClass(), username, token);
+        putData(getEntryClass(), json.getUsername(), json.getPassword());
+    }
+
+    public UserCreateDocument(String username, String password) {
+        super();
+        putData(getEntryClass(), username, password);
     }
 
     /**
      * Put all required data into the document.
      * @param username;
-     * @param token;
+     * @param password;
      * @return TestDocument
      */
-    public UserCreateDocument putAll(String username, String token) {
-        putData(getEntryClass(), username, token);
+    public UserCreateDocument putAll(String username, String password) {
+        putData(getEntryClass(), username, password);
         return this;
     }
 
@@ -57,7 +63,7 @@ public class UserCreateDocument extends InsertDocument {
     @DocumentEntryKeys
     public enum Entry implements InsertDocumentEntry {
         USERNAME("username"),
-        TOKEN("token");
+        PASSWORD("password");
 
         private static final Map<String, Entry> ENTRY_BY_NAME = new HashMap<>();
 

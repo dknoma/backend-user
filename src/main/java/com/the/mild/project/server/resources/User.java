@@ -5,11 +5,11 @@ import com.mongodb.client.MongoDatabase;
 import com.the.mild.project.MongoDatabaseType;
 import com.the.mild.project.db.mongo.MongoDatabaseFactory;
 import com.the.mild.project.db.mongo.MongoDocumentHandler;
-import com.the.mild.project.db.mongo.documents.TodoDocument;
+import com.the.mild.project.db.mongo.documents.UserCreateDocument;
 import com.the.mild.project.db.mongo.exceptions.CollectionNotFoundException;
 import com.the.mild.project.db.mongo.exceptions.DocumentSerializationException;
 import com.the.mild.project.server.jackson.JacksonHandler;
-import com.the.mild.project.server.jackson.TodoJson;
+import com.the.mild.project.server.jackson.UserJson;
 import org.bson.Document;
 
 import javax.inject.Singleton;
@@ -33,16 +33,16 @@ import static com.the.mild.project.server.Main.MONGO_DB_FACTORY;
 @Singleton
 @Path(PATH_USER_RESOURCE)
 public class User {
-    private static final MongoDatabaseFactory mongoFactory;
-    private static final MongoDocumentHandler mongoHandlerDevelopTest;
+    private static final MongoDatabaseFactory MONGO_DATABASE_FACTORY;
+    private static final MongoDocumentHandler MONGO_HANDLER_USERS;
 
     static {
-        mongoFactory = MONGO_DB_FACTORY.orElse(null);
+        MONGO_DATABASE_FACTORY = MONGO_DB_FACTORY.orElse(null);
 
-        assert mongoFactory != null;
+        assert MONGO_DATABASE_FACTORY != null;
 
-        final MongoDatabase developTestDb = mongoFactory.getDatabase(MongoDatabaseType.USERS);
-        mongoHandlerDevelopTest = new MongoDocumentHandler(developTestDb);
+        final MongoDatabase developTestDb = MONGO_DATABASE_FACTORY.getDatabase(MongoDatabaseType.USERS);
+        MONGO_HANDLER_USERS = new MongoDocumentHandler(developTestDb);
     }
 
     /**
@@ -52,12 +52,12 @@ public class User {
     @POST
     @Path(PATH_CREATE)
     @Consumes(MediaType.APPLICATION_JSON)
-    public void addTodo(String todoBody) {
+    public void createUser(String userBody) {
         try {
-            TodoJson todo = JacksonHandler.unmarshal(todoBody, TodoJson.class);
-            final TodoDocument document = new TodoDocument(todo);
+            UserJson user = JacksonHandler.unmarshal(userBody, UserJson.class);
+            final UserCreateDocument document = new UserCreateDocument(user);
 
-            mongoHandlerDevelopTest.tryInsert(document);
+            MONGO_HANDLER_USERS.tryInsert(document);
         } catch(JsonProcessingException | DocumentSerializationException | CollectionNotFoundException e) {
             e.printStackTrace();
         }
@@ -66,17 +66,17 @@ public class User {
     /**
      *
      * @param id format = _id: ObjectId("5e4c9832489d4d3766a257f4")
-     * @param todoBody
+     * @param userBody
      */
     @PUT
     @Path(PATH_PARAM_UPDATE_BY_ID)
     @Consumes(MediaType.APPLICATION_JSON)
-    public void updateTodo(@PathParam(PATH_PARAM_ID) String id, String todoBody) {
+    public void updateUser(@PathParam(PATH_PARAM_ID) String id, String userBody) {
         try {
-            System.out.println(todoBody);
-            Document updateDoc = JacksonHandler.stringToDocument(todoBody);
+            System.out.println(userBody);
+            Document updateDoc = JacksonHandler.stringToDocument(userBody);
 
-            mongoHandlerDevelopTest.tryUpdateOneById(USER.collectionName(), id, updateDoc);
+            MONGO_HANDLER_USERS.tryUpdateOneById(USER.collectionName(), id, updateDoc);
         } catch(JsonProcessingException | CollectionNotFoundException e) {
             e.printStackTrace();
         }

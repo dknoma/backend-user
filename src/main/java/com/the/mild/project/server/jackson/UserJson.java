@@ -1,25 +1,34 @@
 package com.the.mild.project.server.jackson;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class UserJson {
     @JsonProperty("username") private String username;
-    @JsonProperty("token") private String token;
+    @JsonProperty("password") private String password;
 
-    public UserJson(String key, String value) {
-        this.username = key;
-        this.token = value;
-    }
-
-    public UserJson setUsername(String username) {
+    @JsonCreator
+    public UserJson(@JsonProperty("username") String username,
+                    @JsonProperty("password") String password) {
         this.username = username;
-        return this;
+        this.password = password;
     }
 
-    public UserJson setToken(String token) {
-        this.token = token;
-        return this;
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

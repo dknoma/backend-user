@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import static com.the.mild.project.ResourceConfig.PATH_USER_RESOURCE;
+import static com.the.mild.project.ResourceConfig.PATH_USER_RESOURCE_CREATE;
 import static java.net.HttpURLConnection.HTTP_NO_CONTENT;
 import static org.junit.Assert.assertEquals;
 
@@ -41,11 +42,11 @@ public class PathsIT {
      */
     @Test
     public void pathUserCreate() {
-        final UserJson test = new UserJson("username", "token");
+        final UserJson test = new UserJson("username", "password");
 
         String json = JacksonHandler.stringify(test);
 
-        final Response post = target.path(PATH_USER_RESOURCE)
+        final Response post = target.path(PATH_USER_RESOURCE_CREATE)
                                     .request(MediaType.APPLICATION_JSON_TYPE)
                                     .post(Entity.entity(json, MediaType.APPLICATION_JSON_TYPE));
 
