@@ -3,6 +3,7 @@ package com.the.mild.project.server.resources;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.client.MongoDatabase;
 import com.the.mild.project.MongoDatabaseType;
+import com.the.mild.project.db.mongo.DocumentEntry;
 import com.the.mild.project.db.mongo.MongoDatabaseFactory;
 import com.the.mild.project.db.mongo.MongoDocumentHandler;
 import com.the.mild.project.db.mongo.documents.UserCreateDocument;
@@ -25,7 +26,6 @@ import javax.ws.rs.core.MediaType;
 import static com.the.mild.project.MongoCollections.USER;
 import static com.the.mild.project.ResourceConfig.CommonPaths.PATH_CREATE;
 import static com.the.mild.project.ResourceConfig.PATH_USER_RESOURCE;
-import static com.the.mild.project.ResourceConfig.PATH_USER_RESOURCE_GET;
 import static com.the.mild.project.ResourceConfig.PathParams.ID;
 import static com.the.mild.project.ResourceConfig.PathParams.PATH_PARAM_ID;
 import static com.the.mild.project.ResourceConfig.PathParams.PATH_PARAM_UPDATE_BY_ID;
@@ -81,7 +81,7 @@ public class User {
             UserJson user = JacksonHandler.unmarshal(userBody, UserJson.class);
             final UserCreateDocument document = new UserCreateDocument(user);
 
-            MONGO_HANDLER_USERS.tryInsert(document);
+            MONGO_HANDLER_USERS.insertIfAbsent(document, c -> c.addEntry("username", user.getUsername()));
         } catch(JsonProcessingException | DocumentSerializationException | CollectionNotFoundException e) {
             e.printStackTrace();
         }
