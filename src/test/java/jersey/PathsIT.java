@@ -56,12 +56,12 @@ public class PathsIT {
 
         String json = JacksonHandler.stringify(test);
 
-        final Response post = target.path(PATH_USER_RESOURCE_CREATE)
+        final Response resp = target.path(PATH_USER_RESOURCE_CREATE)
                                     .request(MediaType.APPLICATION_JSON_TYPE)
                                     .post(Entity.entity(json, MediaType.APPLICATION_JSON_TYPE));
 
-        final int status = post.getStatus();
-        System.out.printf("status=%s\n", status);
+        final int status = resp.getStatus();
+        System.out.printf("resp=%s\n", resp);
         assertEquals(status, HTTP_NO_CONTENT);
     }
 

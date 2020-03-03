@@ -205,7 +205,7 @@ public final class MongoDocumentHandler {
      * @throws DocumentSerializationException If the document is not annotated correctly.
      * @throws CollectionNotFoundException If the collection name was not found in the database.
      */
-    public MongoDocumentHandler insertIfAbsent(InsertDocument document, Consumer<Entries> query) throws DocumentSerializationException, CollectionNotFoundException {
+    public boolean insertIfAbsent(InsertDocument document, Consumer<Entries> query) throws DocumentSerializationException, CollectionNotFoundException {
         checkIfCanInsertDocument(document);
 
         final String collectionName = getCollectionName(document);
@@ -222,7 +222,7 @@ public final class MongoDocumentHandler {
             collection.insertOne(doc);
         }
 
-        return this;
+        return exists;
     }
 
     private boolean documentExists(MongoCollection<Document> collection, Consumer<Entries> query) {

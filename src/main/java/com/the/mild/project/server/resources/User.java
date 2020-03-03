@@ -22,6 +22,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import static com.the.mild.project.MongoCollections.USER;
 import static com.the.mild.project.ResourceConfig.CommonPaths.PATH_CREATE;
@@ -76,15 +77,24 @@ public class User {
     @POST
     @Path(PATH_CREATE)
     @Consumes(MediaType.APPLICATION_JSON)
-    public void createUser(String userBody) {
+    public Response createUser(String userBody) {
         try {
             UserJson user = JacksonHandler.unmarshal(userBody, UserJson.class);
             final UserCreateDocument document = new UserCreateDocument(user);
 
-            MONGO_HANDLER_USERS.insertIfAbsent(document, c -> c.addEntry("username", user.getUsername()));
+            final boolean exists = MONGO_HANDLER_USERS.insertIfAbsent(document, c -> c.addEntry("username",
+                                                                                                user.getUsername()));
+            final Response resp;
+            if(exists) {
+                resp = Response.status(409, "Username already exists").build();
+            } else {
+                resp = Response.noContent().build();
+            }
+            return resp;
         } catch(JsonProcessingException | DocumentSerializationException | CollectionNotFoundException e) {
             e.printStackTrace();
         }
+        return Response.status(404).build();
     }
 
     /**
