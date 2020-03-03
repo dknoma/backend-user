@@ -1,4 +1,4 @@
-package com.the.mild.project.server.resources;
+package com.the.mild.project.server.controllers;
 
 import com.the.mild.project.server.jackson.JacksonHandler;
 import com.the.mild.project.server.jackson.ParamTest;
